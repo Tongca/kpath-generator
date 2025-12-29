@@ -1,2 +1,0 @@
-[console_scripts]
-kpath-generator = kpath_generator.cli:main
