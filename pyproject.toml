@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kpath-generator"
+version = "0.1.0"
+description = "AFLOW-compliant high-symmetry k-path generator based on SeeK-path"
+authors = [
+    { name = "Tongcai Yue", email = "Tongcai_yue@buaa.edu.cn" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+
+dependencies = [
+    "numpy<2",         
+    "seekpath>=2.0",
+    "pymatgen>=2023.0",
+    "matplotlib",
+]
+
+[project.scripts]
+kpath-generator = "kpath_generator.cli:main"

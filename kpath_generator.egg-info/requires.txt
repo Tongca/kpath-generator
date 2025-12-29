@@ -1,0 +1,4 @@
+numpy<2
+seekpath>=2.0
+pymatgen>=2023.0
+matplotlib
