@@ -161,6 +161,54 @@ def write_alamode(result, segments, npoints):
             )
 
 
+def write_epw_wdata(result, segments, start_index=1):
+    """
+    Write EPW / Wannier k-point path in wdata(i) format
+    """
+    i = start_index
+
+    with open("epw_wdata.inc", "w") as f:
+        f.write(f"wdata({i}) = 'bands_plot = .true.'\n")
+        i += 1
+
+        f.write(f"wdata({i}) = 'begin kpoint_path'\n")
+        i += 1
+
+        for a, b in segments:
+            ka = result["point_coords"][a]
+            kb = result["point_coords"][b]
+
+            line = (
+                f"{a} {ka[0]:.4f} {ka[1]:.4f} {ka[2]:.4f}    "
+                f"{b} {kb[0]:.4f} {kb[1]:.4f} {kb[2]:.4f}"
+            )
+
+            f.write(f"wdata({i}) = '{line}'\n")
+            i += 1
+
+        f.write(f"wdata({i}) = 'end kpoint_path'\n")
+        i += 1
+
+        # ---- Standard Wannier / EPW controls (as in your example) ----
+        f.write(f"wdata({i}) = 'bands_plot_format = gnuplot'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'guiding_centres = .true.'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'dis_num_iter      = 2000'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'num_print_cycles  = 50'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'dis_mix_ratio     = 1.0'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'conv_tol = 1E-8'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'conv_window = 6'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'use_ws_distance = T'\n")
+        i += 1
+        f.write(f"wdata({i}) = 'search_shells = 36'\n")
+
+
 def plot_kpath(result, segments):
     labels = [segments[0][0]] + [b for _, b in segments]
     coords = np.array([result["point_coords"][l] for l in labels])
@@ -190,6 +238,7 @@ def main():
     parser.add_argument("--qe", action="store_true")
     parser.add_argument("--alamode", action="store_true")
     parser.add_argument("--plot", action="store_true")
+    parser.add_argument("--epw-wdata", action="store_true")
 
     args = parser.parse_args()
 
@@ -225,9 +274,10 @@ def main():
     if args.plot:
         plot_kpath(result, segments)
 
-    print("AFLOW k-path generated successfully (Γ preserved).")
+    if args.epw_wdata:
+        write_epw_wdata(result, segments)
 
+    print("AFLOW k-path generated successfully (Γ preserved).")
 
 if __name__ == "__main__":
     main()
-
